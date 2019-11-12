@@ -1,62 +1,69 @@
+bool detectScan(String com) {
+  // start and end reading values
+  if (com.equals(parseStart)) {
+    return true;
+  }
+  if (com.equals(parseEnd)) {
+    return false;
+  }
+}
+
 void parseInput(String com) {
-  // insert code
-  // sample text: "Recv: // probe at 35.000,15.000 is z=-1.47000"
-  String banner = "// probe at";
-  String labels = "*";
+  // sample text:
+  // "Recv: // probe at 35.000,15.000 is z=-1.47000"
+  // "Recv: // probe at 235.000,15.000 is z=2.42000"
+  // "Recv: // probe at 235.000,215.000 is z=-1.48000"
+  // "Recv: // probe at 35.000,215.000 is z=1.67000"
   String comDir = com.substring(0, com.indexOf(":"));
   String comVal = com.substring(com.indexOf(":") + 2);
-  String xValue = comVal.substring(0, comVal.indexOf(","));
-  String yValue = comVal.substring(comVal.indexOf(",") + 1, comVal.indexOf("="));
-  String zValue = comVal.substring(comVal.indexOf("=") + 1)
-  char buff[20];
+  String junk = comVal.substring(0, 11);
+  String xValue = comVal.substring(12, comVal.indexOf(","));
+  String yValue = comVal.substring(comVal.indexOf(",") + 1, comVal.indexOf("i"));
+  String zValue = comVal.substring(comVal.indexOf("=") + 1);
+  char buff[10];
   char *pBuff;
-  int p1, p2;
 
+  Serial.println(com);
+  Serial.println(xValue);
+  Serial.println(yValue);
+  Serial.println(zValue);
+  Serial.println(pass);
   // parse command
   if (comDir.equals("Recv")) {
     // reseting all flags and BLZ values
     if (comVal.equalsIgnoreCase("reset")) {
-      Serial.println("Reseting values");
-      for (int i = 0; i < POINTS; i++) {
-        blZ[i] = 0;
-      }
-      isParallel = false;
-      zAxisHomed = false;
-      hasReadBL = false;
-      hasLabels = false;
-      hasBanner = false;
-    }
-
-    // normal parsing
-    if (hasBanner == false) {
-      if (comVal.equals(banner)) {
-        hasBanner = true;
-      }
+      resetValues();
     } else {
-      if (hasLabels == false) {
-        if (comVal.equals(labels)) {
-          hasLabels = true;
+      if (detectScan(comVal) == true) {
+        if (pass < POINTS) {
+          xValue.toCharArray(buff, 10);
+          pBuff = buff;
+          blX[pass] = atof(pBuff);
+          yValue.toCharArray(buff, 10);
+          pBuff = buff;
+          blY[pass] = atof(pBuff);
+          zValue.toCharArray(buff, 10);
+          pBuff = buff;
+          blZ[pass] = atof(pBuff);
+          pass++;
+          Serial.println(pass);
+        } else {
+          Serial.println("BLTouch Values saved.");
+          Serial.println(pass);
+          pass = 0;
         }
-      } else {     
-        rowVal.toCharArray(buff, 20);
-        pBuff = strtok(buff, " ");
-        
-        if (rowInd.equals("0")) {
-          p1 = 0;
-          p2 = 1;
-        }
-        if (rowInd.equals("1")) {
-          p1 = 2;
-          p2 = 3;
-        }
-          blZ[p1] = atof(pBuff);
-          pBuff = strtok(NULL, " ");
-          blZ[p2] = atof(pBuff);
-      }
-      if (blZ[3] != 0) {
-        Serial.println("Got BLTouch values");
-        hasReadBL = true;
       }
     }
   }
 }
+
+void resetValues() {
+  Serial.println("Reseting values");
+  for (int i = 0; i < POINTS; i++) {
+    blZ[i] = 0;
+  }
+  isParallel = false;
+  zAxisHomed = false;
+  pass = 0;
+}
+

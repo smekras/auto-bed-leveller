@@ -6,7 +6,6 @@
 #define SCREWS 4
 #define STEPS 200
 #define THREAD 0.7
-
 #define BUTTON 2
 #define ZLIMIT 7 // subject to change
 #define M1PIN1 8
@@ -14,23 +13,19 @@
 #define M1PIN3 10
 #define M1PIN4 11
 
-
 // global variables
-String command;
-String startLab = "Send: G29";
-String endLabel = "Recv: Mesh Bed Leveling Complete";
 char c;
-float blX[POINTS] = {-8, 8, 8, -8};
-float blY[POINTS] = {-10, -10, 10, 10};
+String command;
+String parseStart = "Send: G29";
+String parseEnd = "Recv: Mesh Bed Leveling Complete";
+int pass = 0;
+float blX[POINTS] = {0};
+float blY[POINTS] = {0};
 float blZ[POINTS] = {0};
-float scX[SCREWS] = {15, 215, 215, 15};
-float scY[SCREWS] = {35, 35, 235, 235};
+float scX[SCREWS] = {15, 220, 220, 15};
+float scY[SCREWS] = {15, 15, 220, 220};
 float scZ[SCREWS] = {0};
-bool readValues = false;
 bool zAxisHomed = false;
-bool hasBanner = false;
-bool hasLabels = false;
-bool hasReadBL = false;
 bool isParallel = false;
 Bounce debouncer = Bounce();
 
@@ -66,19 +61,10 @@ void loop() {
   int value = debouncer.read();
   
   // reading BLTouch values from Octoprint
-  c = Serial.read();
   if (Serial.available()>0) {
+    c = Serial.read();
     if (c == '\n') {
-      // start and end reading values
-      if (command.equals(startLab)) {
-        readValues = true;
-      }
-      if (command.equals(endLabel)) {
-        readValues = false;
-      }
-      if ((readValues) == true) {
-        parseInput(command);
-      }
+      parseInput(command);
       command = "";
     } else {
       // only include normal characters
@@ -88,7 +74,7 @@ void loop() {
     }
   }
   
-  if (hasReadBL == true) {
+  if (pass >= POINTS) {
     if (isParallel == false) {
       getPlanes();
     }
