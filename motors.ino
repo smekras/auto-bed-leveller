@@ -15,9 +15,9 @@ void getScrewPositions() {
 void homeMotors() {
   int steps = -10;
   int duration = 100;
-  
+
   zAxisHomed = false;
-  while(zAxisHomed == false) {
+  while (zAxisHomed == false) {
     moveMotor(motor1, steps, 1);
     // moveMotor(motor2, steps);
     // moveMotor(motor3, steps);
@@ -30,7 +30,7 @@ void homeMotors() {
 }
 
 void moveMotor(Stepper motor, int steps, int duration) {
-    for (int i = 0; i < duration; i++) {
-      motor1.step(steps);
-    }
+  for (int i = 0; i < duration; i++) {
+    motor1.step(steps);
   }
+}

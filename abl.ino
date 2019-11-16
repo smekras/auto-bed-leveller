@@ -25,8 +25,9 @@ float blZ[POINTS] = {0};
 float scX[SCREWS] = {15, 220, 220, 15};
 float scY[SCREWS] = {15, 15, 220, 220};
 float scZ[SCREWS] = {0};
-bool zAxisHomed = false;
+bool isScanning = false;
 bool isParallel = false;
+bool zAxisHomed = false;
 Bounce debouncer = Bounce();
 
 // initialize stepper library
@@ -35,7 +36,7 @@ Stepper motor1(STEPS, M1PIN1, M1PIN2, M1PIN3, M1PIN4);
 void setup() {
   // set motor speed at whatever value
   motor1.setSpeed(60);
-  
+
   // initialise serial communication at 9600 bps
   Serial.begin(9600);
   Serial.println("Serial Initialized (9600)");
@@ -59,21 +60,14 @@ void loop() {
 
   // Get the updated value :
   int value = debouncer.read();
-  
+
   // reading BLTouch values from Octoprint
-  if (Serial.available()>0) {
-    c = Serial.read();
-    if (c == '\n') {
-      parseInput(command);
-      command = "";
-    } else {
-      // only include normal characters
-      if (' ' <= c && c <= '~') {
-        command += c;
-      }
-    }
+  if (Serial.available() > 0) {
+    command = Serial.readString();
+    command.trim();
+    parseInput(command);
   }
-  
+
   if (pass >= POINTS) {
     if (isParallel == false) {
       getPlanes();
@@ -81,6 +75,6 @@ void loop() {
   }
 
   if (value == LOW) {
-    Serial.println("G28");
+    Serial.println("G29");
   }
 }
