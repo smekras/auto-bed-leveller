@@ -48,6 +48,9 @@ void resetValues() {
     blZ[i] = 0;
   }
   isParallel = false;
-  zAxisHomed = false;
+  motor1.setCurrentPosition(-1000);
+  motor2.setCurrentPosition(-1000);
+  motor3.setCurrentPosition(-1000);
+  motor4.setCurrentPosition(-1000);
   pass = 0;
 }

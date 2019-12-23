@@ -5,32 +5,27 @@ float calculateTurns(float lead) {
 
 void getScrewPositions() {
   // read current positions
-  scZ[0] = 4.01;
-  scZ[1] = 7.02;
-  scZ[2] = 8.04;
-  scZ[3] = 5.03;
+  scZ[0] = motor1.currentPosition();
+  scZ[1] = motor2.currentPosition();
+  scZ[2] = motor3.currentPosition();
+  scZ[3] = motor4.currentPosition();
   Serial.println("Got screw positions.");
 }
 
-void homeMotors() {
-  int steps = -10;
-  int duration = 100;
-
-  zAxisHomed = false;
-  while (zAxisHomed == false) {
-    moveMotor(motor1, steps, 1);
-    // moveMotor(motor2, steps);
-    // moveMotor(motor3, steps);
-    // moveMotor(motor4, steps);
+void homeStepper(AccelStepper motor, int zlimit) {
+  while (motor.currentPosition() != 0) {
+    motor.setSpeed(100);
+    motor.runSpeed();
   }
-  if (digitalRead(ZLIMIT) == HIGH) {
-    zAxisHomed = true;
-    Serial.println("Z homed");
+  
+  if (digitalRead(zlimit) == HIGH) {
+    motor.setCurrentPosition(0);
+    Serial.println("Motor homed");
   }
 }
 
-void moveMotor(Stepper motor, int steps, int duration) {
-  for (int i = 0; i < duration; i++) {
-    motor1.step(steps);
-  }
+void moveStepper(AccelStepper motor, int position) {
+  motor.moveTo(position);
+  motor.runToPosition();
 }
+

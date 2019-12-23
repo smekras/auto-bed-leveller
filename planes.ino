@@ -1,3 +1,10 @@
+void adjustPlane() {
+  moveStepper(motor1, scZ[0]);
+  moveStepper(motor2, scZ[1]);
+  moveStepper(motor3, scZ[2]);
+  moveStepper(motor4, scZ[3]);
+}
+
 void calculatePlane(float plane[4], float x[4], float y[4], float z[4]) {
   float p1[3] = {x[0], y[0], z[0]};
   float p2[3] = {x[1], y[1], z[1]};
@@ -82,6 +89,7 @@ void getPlanes() {
       Serial.println(scZ[i]);
     }
     Serial.println();
+    adjustPlane();
 
     Serial.println("Calculating new screw plane");
     calculatePlane(scPlane, scX, scY, scZ);
