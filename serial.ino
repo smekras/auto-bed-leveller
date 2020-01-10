@@ -25,16 +25,21 @@ void parseInput(String com) {
 
   // parse command
   detectScan(com);
+
+  int position = 0;
   if (comDir.equals("Recv")) {
     // reseting all flags and BLZ values
     if (comVal.equalsIgnoreCase("reset")) {
       resetValues();
     } else {
       if (isScanning == true) {
-        blX[pass] = xValue.toFloat();
-        blY[pass] = yValue.toFloat();
-        blZ[pass] = zValue.toFloat();
-        pass++;
+        if (arraySearch(corners, pass) == true) {
+          blX[position] = xValue.toFloat();
+          blY[position] = yValue.toFloat();
+          blZ[position] = zValue.toFloat();
+          position++;
+          pass++;
+        }
       } else {
         Serial.println("Reset values to scan again.");
       }
