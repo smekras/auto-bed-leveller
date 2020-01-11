@@ -38,8 +38,8 @@ void parseInput(String com) {
           blY[position] = yValue.toFloat();
           blZ[position] = zValue.toFloat();
           position++;
-          pass++;
         }
+        pass++;
       } else {
         Serial.println("Reset values to scan again.");
       }
