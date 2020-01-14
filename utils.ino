@@ -10,8 +10,8 @@ float arrayAverage(float *arr, int len) {
 }
 
 bool arraySearch(int *arr, int val) {
-  int i;
-  for (i=0;i<sizeof(arr)/sizeof(int);i++) {
+  //int x = sizeof(arr)/sizeof(int);
+  for (int i=0;i<4;i++) {
     if (arr[i] == val) {
       return true;
     }

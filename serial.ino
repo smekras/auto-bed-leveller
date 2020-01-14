@@ -13,9 +13,14 @@ void detectScan(String com) {
 void parseInput(String com) {
   // sample text:
   // "Recv: // probe at 35.000,15.000 is z=-1.47000"
+  // "Recv: // probe at 135.000,15.000 is z=-1.47000"
   // "Recv: // probe at 235.000,15.000 is z=2.42000"
-  // "Recv: // probe at 235.000,215.000 is z=-1.48000"
-  // "Recv: // probe at 35.000,215.000 is z=-5.37000"
+  // "Recv: // probe at 235.000,115.000 is z=-1.48000"
+  // "Recv: // probe at 135.000,115.000 is z=-1.48000"
+  // "Recv: // probe at 35.000,115.000 is z=-5.37000"
+  // "Recv: // probe at 35.000,215.000 is z=-1.48000"
+  // "Recv: // probe at 135.000,215.000 is z=-5.37000"
+  // "Recv: // probe at 235.000,215.000 is z=-5.37000"
   String comDir = com.substring(0, com.indexOf(":"));
   String comVal = com.substring(com.indexOf(":") + 2);
   String junk = comVal.substring(0, 11);
@@ -25,15 +30,14 @@ void parseInput(String com) {
 
   // parse command
   detectScan(com);
-
-  int position = 0;
   if (comDir.equals("Recv")) {
     // reseting all flags and BLZ values
     if (comVal.equalsIgnoreCase("reset")) {
       resetValues();
     } else {
       if (isScanning == true) {
-        if (arraySearch(corners, pass) == true) {
+        bool x = arraySearch(corners, pass);
+        if (x == true) {
           blX[position] = xValue.toFloat();
           blY[position] = yValue.toFloat();
           blZ[position] = zValue.toFloat();
@@ -58,4 +62,5 @@ void resetValues() {
   motor3.setCurrentPosition(-1000);
   motor4.setCurrentPosition(-1000);
   pass = 0;
+  position = 0;
 }

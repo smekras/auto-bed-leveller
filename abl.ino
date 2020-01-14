@@ -1,6 +1,7 @@
 #include <AccelStepper.h>
 #include <Bounce2.h>
 
+#define TOUCH 9
 #define POINTS 4
 #define SCREWS 4
 #define STEPS 200
@@ -24,6 +25,7 @@ String command;
 String parseStart = "Send: G29";
 String parseEnd = "Recv: Mesh Bed Leveling Complete";
 int pass = 0;
+int position = 0;
 int corners[4] = {0, 2, 6, 8};
 float blX[POINTS] = {0};
 float blY[POINTS] = {0};
@@ -91,7 +93,7 @@ void loop() {
     parseInput(command);
   }
 
-  if (pass >= POINTS) {
+  if (pass >= TOUCH) {
     if (isParallel == false) {
       getPlanes();
     }
